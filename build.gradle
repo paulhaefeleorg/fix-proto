@@ -36,7 +36,7 @@ dependencies {
 
 application {
     // You can change this later; placeholder main class
-    mainClass = 'com.example.Main'
+    mainClass = 'com.fixperformance.Main'
 }
 
 java {
@@ -47,6 +47,47 @@ java {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.register('runOffHeap', JavaExec) {
+    group = 'application'
+    description = 'Runs the OffHeap main'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.fixperformance.offheap.OffHeapMain'
+}
+
+tasks.register('runThreadPool', JavaExec) {
+    group = 'application'
+    description = 'Runs the ThreadPool main'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.fixperformance.threadpool.ThreadPoolMain'
+}
+
+tasks.register('runBenchmark', JavaExec) {
+    group = 'application'
+    description = 'Runs the Benchmark main'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.fixperformance.benchmark.BenchmarkMain'
+}
+
+// Fat JAR that includes all runtime dependencies
+tasks.register('fatJar', Jar) {
+    group = 'build'
+    description = 'Assembles a fat jar containing all runtime dependencies.'
+    archiveClassifier = 'all'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes('Main-Class': 'com.fixperformance.Main')
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+// Ensure fat jar is produced on build
+tasks.named('build') {
+    dependsOn(tasks.named('fatJar'))
 }
 
 
