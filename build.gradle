@@ -7,9 +7,6 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
-    // OpenHFT early-access artifacts
-    maven { url 'https://repo.openhft.net/content/repositories/releases' }
-    maven { url 'https://repo.openhft.net/content/repositories/snapshots' }
 }
 
 dependencies {
@@ -18,9 +15,9 @@ dependencies {
     implementation 'org.quickfixj:quickfixj-messages-fix44:2.3.1'
 
     // Chronicle libraries (OHS path)
-    implementation 'net.openhft:chronicle-queue:5.25ea24'
-    implementation 'net.openhft:chronicle-wire:2.25ea24'
-    implementation 'net.openhft:chronicle-bytes:2.25ea24'
+    implementation 'net.openhft:chronicle-queue:5.27ea8'
+    implementation 'net.openhft:chronicle-wire:2.27ea11'
+    implementation 'net.openhft:chronicle-bytes:2.27ea7'
 
     // Disruptor (lock-free ring buffer)
     implementation 'com.lmax:disruptor:3.4.4'

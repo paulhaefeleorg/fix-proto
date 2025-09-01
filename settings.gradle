@@ -2,8 +2,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        maven { url 'https://repo.openhft.net/content/repositories/releases' }
-        maven { url 'https://repo.openhft.net/content/repositories/snapshots' }
     }
 }
 
@@ -12,8 +10,6 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven { url 'https://repo.openhft.net/content/repositories/releases' }
-        maven { url 'https://repo.openhft.net/content/repositories/snapshots' }
     }
 }
 
