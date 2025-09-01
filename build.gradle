@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'me.champeau.jmh' version '0.7.2'   // JMH plugin
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    // OpenHFT early-access artifacts
+    maven { url 'https://repo.openhft.net/content/repositories/releases' }
+    maven { url 'https://repo.openhft.net/content/repositories/snapshots' }
+}
+
+dependencies {
+    // FIX engine (classic TPS baseline)
+    implementation 'org.quickfixj:quickfixj-core:2.3.1'
+    implementation 'org.quickfixj:quickfixj-messages-fix44:2.3.1'
+
+    // Chronicle libraries (OHS path)
+    implementation 'net.openhft:chronicle-queue:5.25ea24'
+    implementation 'net.openhft:chronicle-wire:2.25ea24'
+    implementation 'net.openhft:chronicle-bytes:2.25ea24'
+
+    // Disruptor (lock-free ring buffer)
+    implementation 'com.lmax:disruptor:3.4.4'
+
+    // Benchmarking + latency histograms
+    jmh 'org.openjdk.jmh:jmh-core:1.38'
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.38'
+    implementation 'org.hdrhistogram:HdrHistogram:2.1.12'
+
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+}
+
+application {
+    // You can change this later; placeholder main class
+    mainClass = 'com.example.Main'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+

@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url 'https://repo.openhft.net/content/repositories/releases' }
+        maven { url 'https://repo.openhft.net/content/repositories/snapshots' }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://repo.openhft.net/content/repositories/releases' }
+        maven { url 'https://repo.openhft.net/content/repositories/snapshots' }
+    }
+}
+
+rootProject.name = 'fix-proto'
+
+
+
+
