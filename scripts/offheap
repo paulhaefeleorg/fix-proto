@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run the OffHeap (acceptor) server
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT"
+
+# Optional overrides
+LOG_DIR=${LOG_DIR:-logs}
+OFFHEAP_CONFIG_PROP=""
+if [[ -n "${OFFHEAP_CONFIG:-}" ]]; then
+  OFFHEAP_CONFIG_PROP="-Doffheap.config=${OFFHEAP_CONFIG}"
+fi
+
+exec ./gradlew runOffHeap -Dlog.dir="${LOG_DIR}" ${OFFHEAP_CONFIG_PROP} "$@"
+
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%m%n"/>
+    </Console>
+    <RollingFile name="RollingFile"
+                 fileName="${sys:log.dir}/${sys:app.name}.log"
+                 filePattern="${sys:log.dir}/${sys:app.name}-%d{yyyy-MM-dd-HH-mm-ss}.log.gz">
+      <PatternLayout pattern="%m%n"/>
+      <Policies>
+        <OnStartupTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
+
+

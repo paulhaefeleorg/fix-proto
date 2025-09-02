@@ -4,11 +4,6 @@ plugins {
     id 'me.champeau.jmh' version '0.7.2'   // JMH plugin
 }
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
 dependencies {
     // FIX engine (classic TPS baseline)
     implementation 'org.quickfixj:quickfixj-core:2.3.1'
@@ -38,6 +33,10 @@ dependencies {
     implementation 'io.aeron:aeron-client:1.44.1'
     // Agrona (low-latency buffers)
     implementation 'org.agrona:agrona:1.21.1'
+
+    // Logging (Log4j 2)
+    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
 }
 
 application {
@@ -62,6 +61,8 @@ tasks.register('runOffHeap', JavaExec) {
     description = 'Runs the OffHeap main'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.fixperformance.offheap.OffHeapMain'
+    jvmArgs '--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
 }
 
 tasks.register('runThreadPool', JavaExec) {
@@ -76,6 +77,8 @@ tasks.register('runBenchmark', JavaExec) {
     description = 'Runs the Benchmark main'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.fixperformance.benchmark.BenchmarkMain'
+    jvmArgs '--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
 }
 
 tasks.register('refreshFix44Codecs', JavaExec) {
@@ -86,6 +89,64 @@ tasks.register('refreshFix44Codecs', JavaExec) {
     jvmArgs '--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED'
     // Write directly to source tree so code can be versioned
     args 'src/main/java', 'src/main/resources/FIX44.xml'
+}
+
+// This is broken an needs fixing
+tasks.register('printOffheapFixLogs', JavaExec) {
+    group = 'diagnostics'
+    description = 'Prints FIX messages from the acceptor (OffHeap) Artio logs'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'uk.co.real_logic.artio.engine.logger.FixArchivePrinter'
+    jvmArgs '--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
+    doFirst {
+        def logDir = project.findProperty('logDir') ?: 'artio-logs/offheap'
+        def followMode = project.hasProperty('follow')
+        if (followMode) {
+            def aeronDir = project.findProperty('aeronDir') ?: 'build/aeron-offheap'
+            def aeronChannel = project.findProperty('aeronChannel') ?: 'aeron:ipc'
+            args "--aeron-dir-name=${aeronDir}"
+            args "--aeron-channel=${aeronChannel}"
+            args "--follow=${project.property('follow')}"
+        } else {
+            def aeronDir = project.findProperty('aeronDir') ?: 'build/aeron-printer'
+            def aeronChannel = project.findProperty('aeronChannel') ?: 'aeron:ipc'
+            args "--aeron-dir-name=${aeronDir}"
+            args "--aeron-channel=${aeronChannel}"
+            args "--offline-archive-dir=${project.findProperty('offlineArchiveDir') ?: 'aeron-archive'}"
+        }
+        args "--log-file-dir=${logDir}"
+        args "--fix-dictionary=uk.co.real_logic.artio.FixDictionaryImpl"
+    }
+}
+
+// This is broken an needs fixing
+tasks.register('printBenchmarkFixLogs', JavaExec) {
+    group = 'diagnostics'
+    description = 'Prints FIX messages from the initiator (Benchmark) Artio logs'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'uk.co.real_logic.artio.engine.logger.FixArchivePrinter'
+    jvmArgs '--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED'
+    jvmArgs '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
+    doFirst {
+        def logDir = project.findProperty('logDir') ?: 'artio-logs/benchmark'
+        def followMode = project.hasProperty('follow')
+        if (followMode) {
+            def aeronDir = project.findProperty('aeronDir') ?: 'build/aeron-benchmark'
+            def aeronChannel = project.findProperty('aeronChannel') ?: 'aeron:ipc'
+            args "--aeron-dir-name=${aeronDir}"
+            args "--aeron-channel=${aeronChannel}"
+            args "--follow=${project.property('follow')}"
+        } else {
+            def aeronDir = project.findProperty('aeronDir') ?: 'build/aeron-printer'
+            def aeronChannel = project.findProperty('aeronChannel') ?: 'aeron:ipc'
+            args "--aeron-dir-name=${aeronDir}"
+            args "--aeron-channel=${aeronChannel}"
+            args "--offline-archive-dir=${project.findProperty('offlineArchiveDir') ?: 'aeron-archive'}"
+        }
+        args "--log-file-dir=${logDir}"
+        args "--fix-dictionary=uk.co.real_logic.artio.FixDictionaryImpl"
+    }
 }
 
 // Fat JAR that includes all runtime dependencies

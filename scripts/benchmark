@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run the Benchmark (initiator) server
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT"
+
+# Optional overrides
+LOG_DIR=${LOG_DIR:-logs}
+BENCHMARK_CONFIG_PROP=""
+if [[ -n "${BENCHMARK_CONFIG:-}" ]]; then
+  BENCHMARK_CONFIG_PROP="-Dbenchmark.config=${BENCHMARK_CONFIG}"
+fi
+
+exec ./gradlew runBenchmark -Dlog.dir="${LOG_DIR}" ${BENCHMARK_CONFIG_PROP} "$@"
+
+

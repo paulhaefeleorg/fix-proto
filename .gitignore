@@ -28,6 +28,16 @@ replay_pid*
 build/
 out/
 
+# Aeron / Artio runtime and archives
+build/aeron-*/
+aeron-archive/
+**/aeron-archive/**
+artio-logs/
+
+# Application logs
+logs/
+*.log
+
 # IDE
 .idea/
 *.iml
