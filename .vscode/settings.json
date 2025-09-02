@@ -1,6 +1,6 @@
 {
     "cursor.chat.model": "gpt-5",
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.updateBuildConfiguration": "automatic",
     "java.jdt.ls.java.home": "/usr/lib/jvm/msopenjdk-current",
     "java.configuration.runtimes": [
         {

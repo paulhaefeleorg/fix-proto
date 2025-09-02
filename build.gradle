@@ -29,6 +29,15 @@ dependencies {
 
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+
+    // Artio FIX Engine
+    implementation 'uk.co.real-logic:artio-core:0.171'
+    implementation 'uk.co.real-logic:artio-codecs:0.171'
+    // Aeron (transport used by Artio)
+    implementation 'io.aeron:aeron-driver:1.44.1'
+    implementation 'io.aeron:aeron-client:1.44.1'
+    // Agrona (low-latency buffers)
+    implementation 'org.agrona:agrona:1.21.1'
 }
 
 application {
@@ -41,6 +50,8 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+// Optional: regenerate FIX44 codecs explicitly
 
 test {
     useJUnitPlatform()
@@ -65,6 +76,16 @@ tasks.register('runBenchmark', JavaExec) {
     description = 'Runs the Benchmark main'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.fixperformance.benchmark.BenchmarkMain'
+}
+
+tasks.register('refreshFix44Codecs', JavaExec) {
+    group = 'codegen'
+    description = 'Regenerates FIX44 codecs into src/main/java (explicit only)'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'uk.co.real_logic.artio.dictionary.CodecGenerationTool'
+    jvmArgs '--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED'
+    // Write directly to source tree so code can be versioned
+    args 'src/main/java', 'src/main/resources/FIX44.xml'
 }
 
 // Fat JAR that includes all runtime dependencies
